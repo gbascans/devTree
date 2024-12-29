@@ -1,7 +1,9 @@
 import express from "express"; //cambiamos a notacion ESM
 import router from "./router";
+import { connectDB } from "./config/db";
 const app = express();
 
+connectDB();
 //Leer datos de formularios
 app.use(express.json());
 
