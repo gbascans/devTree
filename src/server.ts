@@ -1,9 +1,7 @@
 import express from "express"; //cambiamos a notacion ESM
+import router from "./router";
 const app = express();
 
-// Routing
-app.get("/", (req, res) => {
-  res.send("Hola Mundo en Express / Typescript");
-});
+app.use("/api", router);
 
 export default app;
