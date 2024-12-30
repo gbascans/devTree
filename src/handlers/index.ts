@@ -8,7 +8,7 @@ export const createAccount = async (req: Request, res: Response) => {
   // Manejar errores
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array()[0].msg });
+    res.status(400).json({ errors: errors.array() });
     return;
   }
 
