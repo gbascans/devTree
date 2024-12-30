@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import User from "../models/User";
+import { hashPassword } from "../utils/auth";
 
 export const createAccount = async (req: Request, res: Response) => {
-  let { name, email, password } = req.body;
+  const { name, email, password } = req.body;
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400).json({ error: "El usuario ya está registrado" });
     return;
   }
-  const user = new User({ name, email, password });
+  const hashedPassword = await hashPassword(password);
+  const user = new User({ name, email, password: hashedPassword });
   try {
     await user.save();
     res.json("Usuario Agregado Correctamente");
