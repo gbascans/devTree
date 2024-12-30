@@ -1,7 +1,12 @@
+import { Request, Response } from "express";
 import User from "../models/User";
 
-export const createAccount = async (req, res) => {
+export const createAccount = async (req: Request, res) => {
   let { name, email, password } = req.body;
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return res.status(400).json({ error: "El usuario ya está registrado" });
+  }
   const user = new User({ name, email, password });
   try {
     await user.save();
@@ -11,7 +16,7 @@ export const createAccount = async (req, res) => {
   }
 };
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
     res.json(users);
