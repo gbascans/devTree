@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 import slug from "slug";
 import User from "../models/User";
-import { hashPassword } from "../utils/auth";
+import { checkPassword, hashPassword } from "../utils/auth";
 
+//Register
 export const createAccount = async (req: Request, res: Response) => {
   // Manejar errores
   let errors = validationResult(req);
@@ -43,6 +44,35 @@ export const createAccount = async (req: Request, res: Response) => {
   }
 };
 
+//Login
+export const login = async (req: Request, res: Response) => {
+  // Manejar errores
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json({ errors: errors.array() });
+    return;
+  }
+  const { email, password } = req.body;
+
+  //revisar si está registrado
+  const user = await User.findOne({ email });
+  if (!user) {
+    const error = new Error("El usuario o la contraseña son incorrectos");
+    res.status(409).json({ error: error.message });
+    return;
+  }
+
+  //verificar que la password sea correcta
+  const verifiedPassword = await checkPassword(password, user.password);
+  if (!verifiedPassword) {
+    const error = new Error("El usuario o la contraseña son incorrectos");
+    res.status(401).json({ error: error.message });
+    return;
+  }
+  res.send("Autenticado...");
+};
+
+//get all users
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
