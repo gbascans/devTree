@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import slug from "slug";
 import User from "../models/User";
 import { checkPassword, hashPassword } from "../utils/auth";
+import { generateJWT } from "../utils/jwt";
 
 //Register
 export const createAccount = async (req: Request, res: Response) => {
@@ -55,7 +56,8 @@ export const login = async (req: Request, res: Response) => {
     res.status(401).json({ error: error.message });
     return;
   }
-  res.send("Autenticado...");
+  const token = generateJWT({ id: user._id });
+  res.send(token);
 };
 
 //get all users
